@@ -3,10 +3,23 @@
 <head>
     <style>
         #divSprite{
-            position: absolute;
+            /* position: absolute; */
+            widows: 400px;
+            height:400px;
             left:200px;
-            top:300px;
-            background: rgba(50, 157, 114, 0.667);
+            top:30px;
+            background-color: rgba(50, 157, 114, 0.667);
+        }
+
+        #svgDialRing{
+            position: absolute;
+            left:400px;
+            top:100px;
+        }
+        #svgButton1{
+            position: absolute;
+            left:400px;
+            top:400px;
         }
     </style>
     <meta charset="UTF-8">
@@ -24,24 +37,25 @@
             console.log("mouse leave");
         }
         function go(){
-            rotateAnim("svgButton1", 0, 90, 1.0);
+            //rotateAnim("svgButton1", 0, -90, 1.0);
+            roatateAroundExt('svgDialRing', 50, 50, 200, 0, -90, 0.4);
         }
+
+    
+
+        //rotate an element
+        //args: element id, initial rotation, degrees to roatat, animation duration 
         function rotateAnim(elmId, startDeg, dDeg, animDurSec){
             var elm = document.getElementById(elmId);
             var nmFrames = animDurSec * config.fps;
-            //var degPerFrame = dDeg / nmFrames;
             degPerSec=dDeg/animDurSec;
             var curRot = startDeg;
             
             stepRotat(elm, nmFrames,curRot, degPerSec);
 
-            /* for (i = 0; i < nmFrames; i++){
-                elm.style.transform  = 'rotate('+curRot+'deg)';
-                curRot += degPerFrame;
-                setTimeout
-            } */
         }
 
+        //impliments on stop of the animation 
         function stepRotat(elm, remainSteps,curRot, degPerSec){
             if(remainSteps == 0){
                 return; 
@@ -49,21 +63,52 @@
             elm.style.transform  = 'rotate('+curRot+'deg)';
             setTimeout(stepRotat.bind(null, elm, remainSteps - 1,curRot + degPerSec / config.fps, degPerSec), 1000/config.fps);
         }
+
+
+        function roatateAroundExt(elmId, pvtX, pvtY, rad, startRot, dDeg, animDurSec){
+            var elm=document.getElementById(elmId);
+            var degPerSec =  dDeg / animDurSec;
+            var framesRem = animDurSec * config.fps;
+
+            roatateAroundExtStep(elm, pvtX, pvtY, rad, startRot, degPerSec, framesRem);
+        }
+
+        function roatateAroundExtStep(elm, pvtX, pvtY, rad, curRot, dDegPerSec, framesRem){
+            if(framesRem==0){
+                return;
+            }
+            x=pvtX + Math.sin((curRot / 360) * (2 * Math.PI)) * rad;
+            y=pvtY + Math.cos((curRot / 360) * (2 * Math.PI)) * rad;
+            elm.style.transform  = 'translate('+ x + 'px,' + y + 'px)';
+            setTimeout(
+                roatateAroundExtStep.bind(null, elm, pvtX, pvtY, rad, curRot + dDegPerSec/ config.fps,dDegPerSec, framesRem -1)
+                , 
+            
+            1000/config.fps);
+              
+        }
+
+
+
+
+
+
     </script>
 </head>
 <body>
     
     <div id=divSprite>
-        <!-- <svg width="10" height="10">
-            <rect x="0" y="0" width="10" height="10" fill="blue" />
-        </svg> -->
-
         <svg height="300" width="300" id=svgButton1>
             <path 
                  onmouseover="handleMouseEnter()" onmouseout="handleMouseLeave()"
                  d="M 100 100 L 200 200 H 10 V 40 H 70"
                 fill="#59fa81" stroke="#d85b49" stroke-width="3" />
         </svg>
+
+        <svg width="200" height="200" id=svgDialRing> 
+            <circle cx="100" cy="100" r="20"
+            stroke="black" stroke-width="2" fill="grey" /> 
+        </svg> 
         
     </div>
     <div>
