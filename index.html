@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        #divSprite{
+            position: absolute;
+            left:200px;
+            top:300px;
+            background: rgba(50, 157, 114, 0.667);
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script>
+        const config={
+            fps:40
+        }
+        function handleMouseEnter(){
+            console.log("mouse eneter");
+        }
+        function handleMouseLeave(){
+            console.log("mouse leave");
+        }
+        function go(){
+            rotateAnim("svgButton1", 0, 90, 1.0);
+        }
+        function rotateAnim(elmId, startDeg, dDeg, animDurSec){
+            var elm = document.getElementById(elmId);
+            var nmFrames = animDurSec * config.fps;
+            //var degPerFrame = dDeg / nmFrames;
+            degPerSec=dDeg/animDurSec;
+            var curRot = startDeg;
+            
+            stepRotat(elm, nmFrames,curRot, degPerSec);
+
+            /* for (i = 0; i < nmFrames; i++){
+                elm.style.transform  = 'rotate('+curRot+'deg)';
+                curRot += degPerFrame;
+                setTimeout
+            } */
+        }
+
+        function stepRotat(elm, remainSteps,curRot, degPerSec){
+            if(remainSteps == 0){
+                return; 
+            }
+            elm.style.transform  = 'rotate('+curRot+'deg)';
+            setTimeout(stepRotat.bind(null, elm, remainSteps - 1,curRot + degPerSec / config.fps, degPerSec), 1000/config.fps);
+        }
+    </script>
+</head>
+<body>
+    
+    <div id=divSprite>
+        <!-- <svg width="10" height="10">
+            <rect x="0" y="0" width="10" height="10" fill="blue" />
+        </svg> -->
+
+        <svg height="300" width="300" id=svgButton1>
+            <path 
+                 onmouseover="handleMouseEnter()" onmouseout="handleMouseLeave()"
+                 d="M 100 100 L 200 200 H 10 V 40 H 70"
+                fill="#59fa81" stroke="#d85b49" stroke-width="3" />
+        </svg>
+        
+    </div>
+    <div>
+        <button onclick="go()"">
+            go
+        </button>
+    </div>
+    
+</body>
+</html>
