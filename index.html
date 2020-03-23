@@ -88,14 +88,50 @@
               
         }
 
+        function clickHandler(containerElm, e) {
+            e = e || window.event;
+
+            var mouseX = e.pageX;
+            var mouseY = e.pageY;
+
+            // IE 8
+            if (mouseX === undefined) {
+                mouseX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                mouseY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            }
+
+            if(containerElm){
+                var pivPos = posInDoc(containerElm);
+                mouseX = mouseX - pivPos.left;
+                mouseY = mouseY - pivPos.top; 
+            }
+
+            console.log(mouseX, mouseY);
+        }
 
 
+        function posInDoc(el) {
+            var rect = el.getBoundingClientRect(),
+            scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+            scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+        }
 
+
+        function docLoadHandler(){
+            var target =  document.getElementById('divSprite');
+            //var target = document;
+            
+            boundClickHandler=clickHandler.bind(null, document.getElementById('divSprite'));
+            // attach handler to the click event of the document
+            if (target.attachEvent) target.attachEvent('onclick', boundClickHandler);
+            else target.addEventListener('click', boundClickHandler);
+        }
 
 
     </script>
 </head>
-<body>
+<body onload="docLoadHandler()">
     
     <div id=divSprite>
         <svg height="300" width="300" id=svgButton1>
