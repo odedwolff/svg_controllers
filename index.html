@@ -21,6 +21,14 @@
             left:400px;
             top:400px;
         }
+        #divGuide{
+            position: absolute;
+            background: rgb(8, 86, 8);
+            width: 10px;
+            height: 10px;
+            left:300px; 
+            top:200px;
+        }
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -88,7 +96,7 @@
               
         }
 
-        function clickHandler(containerElm, e) {
+        function clickHandler(containerElm, pvtX, pvtY, e) {
             e = e || window.event;
 
             var mouseX = e.pageX;
@@ -106,7 +114,25 @@
                 mouseY = mouseY - pivPos.top; 
             }
 
+            var offsetFromPivot = {
+                x:mouseX - pvtX, 
+                y:mouseY - pvtY
+            }
+
+            var angleToOffsetRad = Math.atan(offsetFromPivot.y / offsetFromPivot.x);
+            var angleToOffsetDeg = 90 * (angleToOffsetRad / Math.PI * 2);
+            if(offsetFromPivot.x > 0  && offsetFromPivot.y < 0) angleToOffsetDeg=angleToOffsetDeg+180
+            else 
+            if (offsetFromPivot.x > 0  && offsetFromPivot.y >  0) angleToOffsetDeg=angleToOffsetDeg+180
+            else 
+            if (offsetFromPivot.x < 0  && offsetFromPivot.y >  0) angleToOffsetDeg=angleToOffsetDeg + 360;
+
+            console.log("x,y from container");
             console.log(mouseX, mouseY);
+            console.log("x,y from test guide")
+            console.log(offsetFromPivot.x, offsetFromPivot.y);
+            console.log("claculated angle degrees: " + angleToOffsetDeg);
+
         }
 
 
@@ -122,7 +148,7 @@
             var target =  document.getElementById('divSprite');
             //var target = document;
             
-            boundClickHandler=clickHandler.bind(null, document.getElementById('divSprite'));
+            boundClickHandler=clickHandler.bind(null, document.getElementById('divSprite'), 300, 200);
             // attach handler to the click event of the document
             if (target.attachEvent) target.attachEvent('onclick', boundClickHandler);
             else target.addEventListener('click', boundClickHandler);
@@ -145,6 +171,8 @@
             <circle cx="100" cy="100" r="20"
             stroke="black" stroke-width="2" fill="grey" /> 
         </svg> 
+
+        <div id=divGuide></div>
         
     </div>
     <div>
@@ -152,6 +180,7 @@
             go
         </button>
     </div>
+
     
 </body>
 </html>
