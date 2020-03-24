@@ -3,8 +3,8 @@
 <head>
     <style>
         #divSprite{
-            /* position: absolute; */
-            widows: 400px;
+            position: absolute;
+            width: 800px;
             height:400px;
             left:200px;
             top:30px;
@@ -157,6 +157,24 @@
             return angleToOffsetDeg;
         }
 
+        function positionDial(angle, containerName){
+            var dialElm=document.getElementById(controllerContexts[containerName].dialId);
+            var innerDialElm= document.getElementById(controllerContexts[containerName].innerDialId);
+            var dialPos = posInDoc(circleDial); 
+ 
+            angle = angle + 180; 
+            var left  = 
+                controllerContexts[containerName].pivX + 
+                +  Math.cos((angle/360) * 2 * Math.PI) * controllerContexts[containerName].rad;
+            
+            var top = 
+                controllerContexts[containerName].pivY 
+                + Math.sin((angle/360) * 2 * Math.PI) * controllerContexts[containerName].rad;
+
+            dialElm.style.left=left - 100;
+            dialElm.style.top=top - 100;
+        }
+
 
         
 
@@ -185,32 +203,15 @@
             cont1:{
                 pivX:300,
                 pivY:200,
+                rad:100,
                 containerId:"divSprite",
                 dialId:"svgDialRing",
+                innerDialId:"circleDial",
                 dragging:false
             }
         }
         
-        /*----------------------------------------------------------------------*/
-      /*   
-        function mouseDownInDial(containerElm, dialElm , pvtX, pvtY,e){
-             //if clicked on dial, sart traking of dial
-             console.log("started traking"); 
-            // var boundMousehandler=mouseMoveHandler.bind(null, document.getElementById('divSprite'), 300, 200);
-            var boundMousehandler=mouseMoveHandler.bind(null, containerElm, pvtX, pvtY);
-            containerElm.addEventListener('mousemove', boundMousehandler);
-        }
-        function mouseUpInContainer(containerElm, dialElm, e){
-            //relase tracking of dial
-            console.log("ended traking");
-            containerElm.removeEventListener('mousemove', mouseTrackingListeners.containerElm); 
-        }
-        function mouseMoveHandler(containerElm, pvtX, pvtY, e){
-            console.log(e.pageX, e.pageY);
-            
-        } */
-
-        /*----------------------------------------------------------------------*/
+        
         function mouseDownInDial(controllerId, e){
             console.log("started traking"); 
             controllerContexts.cont1.dragging=true; 
@@ -223,10 +224,12 @@
             }
             console.log(e.pageX, e.pageY);
             var containerElm=document.getElementById(controllerContexts.cont1.containerId);
-            var pivotElm=document.getElementById(controllerContexts.cont1.dialId);
+            //var pivotElm=document.getElementById(controllerContexts.cont1.dialId);
             var pvtXLoc=controllerContexts.cont1.pivX;
             var pvtYLoc=controllerContexts.cont1.pivY;
-            console.log(angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY));
+            var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY)
+            console.log(angDeg);
+            positionDial(angDeg , "cont1");
         }
 
         function mouseUpInContainer(controllerId, e){
