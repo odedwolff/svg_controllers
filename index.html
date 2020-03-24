@@ -96,7 +96,7 @@
               
         }
 
-        function clickHandler(containerElm, pvtX, pvtY, e) {
+        function testPosClickHandler(containerElm, pvtX, pvtY, e) {
             e = e || window.event;
 
             var mouseX = e.pageX;
@@ -136,6 +136,9 @@
         }
 
 
+        
+
+
         function posInDoc(el) {
             var rect = el.getBoundingClientRect(),
             scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
@@ -144,14 +147,71 @@
         }
 
 
+        function dialMoveHandler(containerElm, pvtX, pvtY){
+            
+        }
+
+        
+        var mouseTrackingListeners = {
+
+        }
+
+
+        var controllerContexts = {
+            cont1:{
+                pivX:300,
+                pivY:200,
+                containerId:"divSprite",
+                dialId:"svgDialRing",
+                dragging:false
+            }
+        }
+        
+        /*----------------------------------------------------------------------*/
+        function mouseDownInDial(containerElm, dialElm , pvtX, pvtY,e){
+             //if clicked on dial, sart traking of dial
+             console.log("started traking"); 
+            // var boundMousehandler=mouseMoveHandler.bind(null, document.getElementById('divSprite'), 300, 200);
+            var boundMousehandler=mouseMoveHandler.bind(null, containerElm, pvtX, pvtY);
+            containerElm.addEventListener('mousemove', boundMousehandler);
+        }
+        function mouseUpInContainer(containerElm, dialElm, e){
+            //relase tracking of dial
+            console.log("ended traking");
+            containerElm.removeEventListener('mousemove', mouseTrackingListeners.containerElm); 
+        }
+        function mouseMoveHandler(containerElm, pvtX, pvtY, e){
+            console.log(e.pageX, e.pageY);
+        }
+
+        /*----------------------------------------------------------------------*/
+        function mouseDownInDial(controllerId, e){
+            console.log("started traking"); 
+            controllerContexts.cont1.dragging=true; 
+        }
+
+
+        function mouseMoveHandler(controllerId, e){
+            if(!controllerContexts.cont1.dragging){
+                return;
+            }
+            console.log(e.pageX, e.pageY);
+        }
+
+        function mouseUpInContainer(controllerId, e){
+            console.log("stopped traking"); 
+            controllerContexts.cont1.dragging=false; 
+        }
+        /*----------------------------------------------------------------------*/
+
+
+
+
         function docLoadHandler(){
             var target =  document.getElementById('divSprite');
-            //var target = document;
-            
-            boundClickHandler=clickHandler.bind(null, document.getElementById('divSprite'), 300, 200);
-            // attach handler to the click event of the document
-            if (target.attachEvent) target.attachEvent('onclick', boundClickHandler);
-            else target.addEventListener('click', boundClickHandler);
+            document.getElementById('circleDial').addEventListener('mousedown', mouseDownInDial.bind(null, 'cont1'));
+            document.getElementById('divSprite').addEventListener('mousemove', mouseMoveHandler.bind(null, 'cont1'));
+            document.getElementById('divSprite').addEventListener('mouseup', mouseUpInContainer.bind(null, 'cont1'));
         }
 
 
@@ -168,7 +228,7 @@
         </svg>
 
         <svg width="200" height="200" id=svgDialRing> 
-            <circle cx="100" cy="100" r="20"
+            <circle id=circleDial cx="100" cy="100" r="20"
             stroke="black" stroke-width="2" fill="grey" /> 
         </svg> 
 
@@ -176,7 +236,7 @@
         
     </div>
     <div>
-        <button onclick="go()"">
+        <button onclick="go()">
             go
         </button>
     </div>
