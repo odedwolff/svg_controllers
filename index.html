@@ -136,9 +136,33 @@
         }
 
 
+
+
+        function angleFromPivot(containerElm, pvtXLoc, pvtYLoc, xMouseAbs, yMouseAbs){
+            var pivPos = posInDoc(containerElm);
+            mouseXLoc = xMouseAbs - pivPos.left;
+            mouseYLoc = yMouseAbs - pivPos.top; 
+            var offsetFromPivot = {
+                x:mouseXLoc - pvtXLoc, 
+                y:mouseYLoc - pvtYLoc
+            }
+            var angleToOffsetRad = Math.atan(offsetFromPivot.y / offsetFromPivot.x);
+            var angleToOffsetDeg = 90 * (angleToOffsetRad / Math.PI * 2);
+            if(offsetFromPivot.x > 0  && offsetFromPivot.y < 0) angleToOffsetDeg=angleToOffsetDeg+180
+            else 
+            if (offsetFromPivot.x > 0  && offsetFromPivot.y >  0) angleToOffsetDeg=angleToOffsetDeg+180
+            else 
+            if (offsetFromPivot.x < 0  && offsetFromPivot.y >  0) angleToOffsetDeg=angleToOffsetDeg + 360;
+
+            return angleToOffsetDeg;
+        }
+
+
         
 
+        
 
+        //elements position, compansating for mouse scrolls 
         function posInDoc(el) {
             var rect = el.getBoundingClientRect(),
             scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
@@ -147,14 +171,14 @@
         }
 
 
-        function dialMoveHandler(containerElm, pvtX, pvtY){
+        /* function dialMoveHandler(containerElm, pvtX, pvtY){
             
         }
 
         
         var mouseTrackingListeners = {
 
-        }
+        } */
 
 
         var controllerContexts = {
@@ -168,6 +192,7 @@
         }
         
         /*----------------------------------------------------------------------*/
+      /*   
         function mouseDownInDial(containerElm, dialElm , pvtX, pvtY,e){
              //if clicked on dial, sart traking of dial
              console.log("started traking"); 
@@ -182,7 +207,8 @@
         }
         function mouseMoveHandler(containerElm, pvtX, pvtY, e){
             console.log(e.pageX, e.pageY);
-        }
+            
+        } */
 
         /*----------------------------------------------------------------------*/
         function mouseDownInDial(controllerId, e){
@@ -196,6 +222,11 @@
                 return;
             }
             console.log(e.pageX, e.pageY);
+            var containerElm=document.getElementById(controllerContexts.cont1.containerId);
+            var pivotElm=document.getElementById(controllerContexts.cont1.dialId);
+            var pvtXLoc=controllerContexts.cont1.pivX;
+            var pvtYLoc=controllerContexts.cont1.pivY;
+            console.log(angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY));
         }
 
         function mouseUpInContainer(controllerId, e){
