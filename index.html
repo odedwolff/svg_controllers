@@ -97,47 +97,7 @@
               
         }
 
-        function testPosClickHandler(containerElm, pvtX, pvtY, e) {
-            e = e || window.event;
-
-            var mouseX = e.pageX;
-            var mouseY = e.pageY;
-
-            // IE 8
-            if (mouseX === undefined) {
-                mouseX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                mouseY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            }
-
-            if(containerElm){
-                var pivPos = posInDoc(containerElm);
-                mouseX = mouseX - pivPos.left;
-                mouseY = mouseY - pivPos.top; 
-            }
-
-            var offsetFromPivot = {
-                x:mouseX - pvtX, 
-                y:mouseY - pvtY
-            }
-
-            var angleToOffsetRad = Math.atan(offsetFromPivot.y / offsetFromPivot.x);
-            var angleToOffsetDeg = 90 * (angleToOffsetRad / Math.PI * 2);
-            if(offsetFromPivot.x > 0  && offsetFromPivot.y < 0) angleToOffsetDeg=angleToOffsetDeg+180
-            else 
-            if (offsetFromPivot.x > 0  && offsetFromPivot.y >  0) angleToOffsetDeg=angleToOffsetDeg+180
-            else 
-            if (offsetFromPivot.x < 0  && offsetFromPivot.y >  0) angleToOffsetDeg=angleToOffsetDeg + 360;
-
-            console.log("x,y from container");
-            console.log(mouseX, mouseY);
-            console.log("x,y from test guide")
-            console.log(offsetFromPivot.x, offsetFromPivot.y);
-            console.log("claculated angle degrees: " + angleToOffsetDeg);
-
-        }
-
-
-
+        
 
         function angleFromPivot(containerElm, pvtXLoc, pvtYLoc, xMouseAbs, yMouseAbs, containerName){
             var pivPos = posInDoc(containerElm);
