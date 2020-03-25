@@ -28,6 +28,7 @@
             height: 10px;
             left:300px; 
             top:200px;
+            
         }
     </style>
     <meta charset="UTF-8">
@@ -154,7 +155,16 @@
             else 
             if (offsetFromPivot.x < 0  && offsetFromPivot.y >  0) angleToOffsetDeg=angleToOffsetDeg + 360;
 
-            return (angleToOffsetDeg + 90) % 360;
+            var offsetedAngle =  (angleToOffsetDeg + 90) % 360;          
+            if(offsetedAngle<globalSettings.meanAngle){
+                controllerContexts.cont1.dragging=false;
+                offsetedAngle=globalSettings.meanAngle;
+            }
+            if(offsetedAngle>globalSettings.maxAngle){
+                offsetedAngle=globalSettings.maxAngle;
+                controllerContexts.cont1.dragging=false;
+            }
+            return offsetedAngle;
         }
 
         function positionDial(angle, containerName){
@@ -199,6 +209,10 @@
 
         } */
 
+        var globalSettings = {
+            meanAngle:45, 
+            maxAngle:315
+        }
 
         var controllerContexts = {
             cont1:{
@@ -225,7 +239,6 @@
             }
             console.log(e.pageX, e.pageY);
             var containerElm=document.getElementById(controllerContexts.cont1.containerId);
-            //var pivotElm=document.getElementById(controllerContexts.cont1.dialId);
             var pvtXLoc=controllerContexts.cont1.pivX;
             var pvtYLoc=controllerContexts.cont1.pivY;
             var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY)
