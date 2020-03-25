@@ -37,8 +37,11 @@
 
     <script>
         const config={
-            fps:40
+            fps:40,
+            limitBackBounceDeg:20
         }
+
+
         function handleMouseEnter(){
             console.log("mouse eneter");
         }
@@ -118,10 +121,10 @@
             var offsetedAngle =  (angleToOffsetDeg + 90) % 360;          
             if(offsetedAngle<globalSettings.meanAngle){
                 controllerContexts[containerName].dragging=false;
-                offsetedAngle=globalSettings.meanAngle;
+                offsetedAngle=globalSettings.meanAngle + config.limitBackBounceDeg;
             }
             if(offsetedAngle>globalSettings.maxAngle){
-                offsetedAngle=globalSettings.maxAngle;
+                offsetedAngle=globalSettings.maxAngle - config.limitBackBounceDeg;
                 controllerContexts[containerName].dragging=false;
             }
             return offsetedAngle;
