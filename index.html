@@ -154,7 +154,7 @@
             else 
             if (offsetFromPivot.x < 0  && offsetFromPivot.y >  0) angleToOffsetDeg=angleToOffsetDeg + 360;
 
-            return angleToOffsetDeg;
+            return (angleToOffsetDeg + 90) % 360;
         }
 
         function positionDial(angle, containerName){
@@ -162,7 +162,8 @@
             var innerDialElm= document.getElementById(controllerContexts[containerName].innerDialId);
             var dialPos = posInDoc(circleDial); 
  
-            angle = angle + 180; 
+           // angle = angle + 180;
+            angle = angle + 90 
             var left  = 
                 controllerContexts[containerName].pivX + 
                 +  Math.cos((angle/360) * 2 * Math.PI) * controllerContexts[containerName].rad;
