@@ -139,7 +139,7 @@
 
 
 
-        function angleFromPivot(containerElm, pvtXLoc, pvtYLoc, xMouseAbs, yMouseAbs){
+        function angleFromPivot(containerElm, pvtXLoc, pvtYLoc, xMouseAbs, yMouseAbs, containerName){
             var pivPos = posInDoc(containerElm);
             mouseXLoc = xMouseAbs - pivPos.left;
             mouseYLoc = yMouseAbs - pivPos.top; 
@@ -157,12 +157,12 @@
 
             var offsetedAngle =  (angleToOffsetDeg + 90) % 360;          
             if(offsetedAngle<globalSettings.meanAngle){
-                controllerContexts.cont1.dragging=false;
+                controllerContexts[containerName].dragging=false;
                 offsetedAngle=globalSettings.meanAngle;
             }
             if(offsetedAngle>globalSettings.maxAngle){
                 offsetedAngle=globalSettings.maxAngle;
-                controllerContexts.cont1.dragging=false;
+                controllerContexts[containerName].dragging=false;
             }
             return offsetedAngle;
         }
@@ -227,28 +227,28 @@
         }
         
         
-        function mouseDownInDial(controllerId, e){
+        function mouseDownInDial(containerName, e){
             console.log("started traking"); 
-            controllerContexts.cont1.dragging=true; 
+            controllerContexts[containerName].dragging=true; 
         }
 
 
-        function mouseMoveHandler(controllerId, e){
-            if(!controllerContexts.cont1.dragging){
+        function mouseMoveHandler(containerName, e){
+            if(!controllerContexts[containerName].dragging){
                 return;
             }
             console.log(e.pageX, e.pageY);
-            var containerElm=document.getElementById(controllerContexts.cont1.containerId);
-            var pvtXLoc=controllerContexts.cont1.pivX;
-            var pvtYLoc=controllerContexts.cont1.pivY;
-            var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY)
+            var containerElm=document.getElementById(controllerContexts[containerName].containerId);
+            var pvtXLoc=controllerContexts[containerName].pivX;
+            var pvtYLoc=controllerContexts[containerName].pivY;
+            var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY, containerName)
             console.log(angDeg);
-            positionDial(angDeg , "cont1");
+            positionDial(angDeg , containerName);
         }
 
-        function mouseUpInContainer(controllerId, e){
+        function mouseUpInContainer(containerName, e){
             console.log("stopped traking"); 
-            controllerContexts.cont1.dragging=false; 
+            controllerContexts[containerName].dragging=false; 
         }
         /*----------------------------------------------------------------------*/
 
