@@ -200,8 +200,8 @@
                 containerId:"divSprite",
                 dialId:"svgDialRing",
                 //innerDialId:"circleDial",
-                dragging:false,
-                isDescrete:true,
+                dragging:false,   /*runtime state, init to false*/
+                isDescrete:false,
                 stopsDeg:[90, 135, 180, 225, 270]
             }
         }
@@ -218,12 +218,7 @@
                 return;
             }
             console.log(e.pageX, e.pageY);
-            var containerElm=document.getElementById(controllerContexts[containerName].containerId);
-            var pvtXLoc=controllerContexts[containerName].pivX;
-            var pvtYLoc=controllerContexts[containerName].pivY;
-            var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY, containerName)
-            console.log(angDeg);
-            positionDial(angDeg , containerName, false);
+            positionDialByMouse(containerName, e, false);
         }
 
         function mouseUpInContainer(containerName, e){
@@ -231,15 +226,18 @@
             controllerContexts[containerName].dragging=false; 
             //if descrete, hop to closest stop 
             if(controllerContexts[containerName].isDescrete){
-                var containerElm=document.getElementById(controllerContexts[containerName].containerId);
+                positionDialByMouse(containerName, e, true);
+            }
+        }
+        /*----------------------------------------------------------------------*/
+        function positionDialByMouse(containerName, e, shoulHopToClosest){
+            var containerElm=document.getElementById(controllerContexts[containerName].containerId);
                 var pvtXLoc=controllerContexts[containerName].pivX;
                 var pvtYLoc=controllerContexts[containerName].pivY;
                 var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY, containerName);
                 console.log("hopping to angle");
-                positionDial(angDeg , containerName, true);
-            }
+                positionDial(angDeg , containerName, shoulHopToClosest);
         }
-        /*----------------------------------------------------------------------*/
 
 
 
