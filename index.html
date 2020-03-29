@@ -130,13 +130,19 @@
             return offsetedAngle;
         }
 
-        function positionDial(angle, containerName){
+        function positionDial(angle, containerName, atCloseststop){
             var dialElm=document.getElementById(controllerContexts[containerName].dialId);
-            var innerDialElm= document.getElementById(controllerContexts[containerName].innerDialId);
+            //var innerDialElm= document.getElementById(controllerContexts[containerName].innerDialId);
             var dialPos = posInDoc(circleDial); 
  
            // angle = angle + 180;
             angle = angle + 90 
+
+            if(atCloseststop && controllerContexts[containerName].isDescrete){
+                angle = findClosestStop(angle, containerName)
+            }
+
+
             var left  = 
                 controllerContexts[containerName].pivX + 
                 +  Math.cos((angle/360) * 2 * Math.PI) * controllerContexts[containerName].rad;
@@ -150,7 +156,16 @@
         }
 
 
-        
+        function findClosestStop(angle, containerName){
+            var stops = controllerContexts[containerName].stopsDeg
+            var closestAngle = 10000;
+            for (i in stops){
+                if(Math.abs(stops[i]  + 90 - angle) < Math.abs(closestAngle - angle)){
+                    closestAngle = stops[i] + 90;
+                }
+            }
+            return closestAngle;
+        }
 
         
 
@@ -184,8 +199,10 @@
                 rad:100,
                 containerId:"divSprite",
                 dialId:"svgDialRing",
-                innerDialId:"circleDial",
-                dragging:false
+                //innerDialId:"circleDial",
+                dragging:false,
+                isDescrete:true,
+                stopsDeg:[90, 135, 180, 225, 270]
             }
         }
         
@@ -206,12 +223,21 @@
             var pvtYLoc=controllerContexts[containerName].pivY;
             var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY, containerName)
             console.log(angDeg);
-            positionDial(angDeg , containerName);
+            positionDial(angDeg , containerName, false);
         }
 
         function mouseUpInContainer(containerName, e){
             console.log("stopped traking"); 
             controllerContexts[containerName].dragging=false; 
+            //if descrete, hop to closest stop 
+            if(controllerContexts[containerName].isDescrete){
+                var containerElm=document.getElementById(controllerContexts[containerName].containerId);
+                var pvtXLoc=controllerContexts[containerName].pivX;
+                var pvtYLoc=controllerContexts[containerName].pivY;
+                var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY, containerName);
+                console.log("hopping to angle");
+                positionDial(angDeg , containerName, true);
+            }
         }
         /*----------------------------------------------------------------------*/
 
