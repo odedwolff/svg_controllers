@@ -3,7 +3,7 @@
 <head>
     <style>
         #divSprite{
-            position: absolute;
+            /* position: absolute; */
             width: 800px;
             height:400px;
             left:200px;
@@ -30,6 +30,24 @@
             top:200px;
             
         }
+        #dialsContainer{
+            position: relative;
+            width: 800px;
+            height:400px;
+            margin-left: 120px;
+            margin-right: 120px;
+        }
+        #guideCentrDialTop{
+            position: absolute;
+            top:150px;
+            left:140px;
+            width:6px;
+            height: 6px;
+            background: yellow;
+        }
+       
+
+
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,6 +57,34 @@
         const config={
             fps:40,
             limitBackBounceDeg:20
+        }
+        var globalSettings = {
+            meanAngle:45, 
+            maxAngle:315
+        }
+
+        var controllerContexts = {
+            cont1:{
+                pivX:300,
+                pivY:200,
+                rad:100,
+                containerId:"divSprite",
+                dialId:"svgDialRing",
+                dragging:false,   /*runtime state, init to false*/
+                isDescrete:false,
+                stopsDeg:[90, 135, 180, 225, 270]
+            },
+            contDialtop:{
+                pivX:150,
+                pivY:140,
+                rad:60,
+                containerId:"dialsContainer",
+                dialId:"circlePointerTopDial",
+                dragging:false,   /*runtime state, init to false*/
+                isDescrete:false,
+                stopsDeg:[90, 135, 180, 225, 270]
+            },
+
         }
 
 
@@ -187,24 +233,7 @@
 
         } */
 
-        var globalSettings = {
-            meanAngle:45, 
-            maxAngle:315
-        }
-
-        var controllerContexts = {
-            cont1:{
-                pivX:300,
-                pivY:200,
-                rad:100,
-                containerId:"divSprite",
-                dialId:"svgDialRing",
-                //innerDialId:"circleDial",
-                dragging:false,   /*runtime state, init to false*/
-                isDescrete:false,
-                stopsDeg:[90, 135, 180, 225, 270]
-            }
-        }
+        
         
         
         function mouseDownInDial(containerName, e){
@@ -217,7 +246,7 @@
             if(!controllerContexts[containerName].dragging){
                 return;
             }
-            console.log(e.pageX, e.pageY);
+            //console.log(e.pageX, e.pageY);
             positionDialByMouse(containerName, e, false);
         }
 
@@ -227,6 +256,7 @@
             //if descrete, hop to closest stop 
             if(controllerContexts[containerName].isDescrete){
                 positionDialByMouse(containerName, e, true);
+                console.log("hoping to next stop");
             }
         }
         /*----------------------------------------------------------------------*/
@@ -235,18 +265,22 @@
                 var pvtXLoc=controllerContexts[containerName].pivX;
                 var pvtYLoc=controllerContexts[containerName].pivY;
                 var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY, containerName);
-                console.log("hopping to angle");
                 positionDial(angDeg , containerName, shoulHopToClosest);
         }
 
 
 
-
+        /**set listeners for the moving parts**/
         function docLoadHandler(){
-            var target =  document.getElementById('divSprite');
             document.getElementById('circleDial').addEventListener('mousedown', mouseDownInDial.bind(null, 'cont1'));
             document.getElementById('divSprite').addEventListener('mousemove', mouseMoveHandler.bind(null, 'cont1'));
             document.getElementById('divSprite').addEventListener('mouseup', mouseUpInContainer.bind(null, 'cont1'));
+
+            //external svg, slighly different than embedded
+            var svgObject = document.getElementById('svgObjDialTop').contentDocument;
+            svgObject.getElementById('circlePointerTopDial').addEventListener('mousedown', mouseDownInDial.bind(null, 'contDialtop'));
+            document.getElementById('dialsContainer').addEventListener('mousemove', mouseMoveHandler.bind(null, 'contDialtop'));
+            document.getElementById('dialsContainer').addEventListener('mouseup', mouseUpInContainer.bind(null, 'contDialtop'));
         }
 
 
@@ -266,7 +300,6 @@
             <circle id=circleDial cx="100" cy="100" r="20"
             stroke="black" stroke-width="2" fill="grey" /> 
         </svg> 
-
         <div id=divGuide></div>
         
     </div>
@@ -274,6 +307,12 @@
         <button onclick="go()">
             go
         </button>
+    </div>
+    <div id=dialsContainer>
+        <object type="image/svg+xml" data="top_dial.svg" id=svgObjDialTop></object>
+        <div id="guideCentrDialTop">
+
+        </div>
     </div>
 
     
