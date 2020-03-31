@@ -272,29 +272,35 @@
 
         /**set listeners for the moving parts**/
         function docLoadHandler(){
+            //setUpListeners();
+        }
+
+        function setUpListeners(){
             document.getElementById('circleDial').addEventListener('mousedown', mouseDownInDial.bind(null, 'cont1'));
             document.getElementById('divSprite').addEventListener('mousemove', mouseMoveHandler.bind(null, 'cont1'));
             document.getElementById('divSprite').addEventListener('mouseup', mouseUpInContainer.bind(null, 'cont1'));
 
             //external svg, slighly different than embedded
-            var svgObject = document.getElementById('svgObjDialTop').contentDocument;
-            svgObject.getElementById('circlePointerTopDial').addEventListener('mousedown', mouseDownInDial.bind(null, 'contDialtop'));
+            var svgObject = document.getElementById('svgObjDialTop');
+            var extContent= svgObject.contentDocument;
+            //var extContent= svgObject.contentWindow;
+            extContent.getElementById('circlePointerTopDial').addEventListener('mousedown', mouseDownInDial.bind(null, 'contDialtop'));
             document.getElementById('dialsContainer').addEventListener('mousemove', mouseMoveHandler.bind(null, 'contDialtop'));
             document.getElementById('dialsContainer').addEventListener('mouseup', mouseUpInContainer.bind(null, 'contDialtop'));
         }
 
-
+        window.addEventListener("load", setUpListeners);
     </script>
 </head>
 <body onload="docLoadHandler()">
     
     <div id=divSprite>
-        <svg height="300" width="300" id=svgButton1>
+        <!-- <svg height="300" width="300" id=svgButton1>
             <path 
                  onmouseover="handleMouseEnter()" onmouseout="handleMouseLeave()"
                  d="M 100 100 L 200 200 H 10 V 40 H 70"
                 fill="#59fa81" stroke="#d85b49" stroke-width="3" />
-        </svg>
+        </svg> -->
 
         <svg width="200" height="200" id=svgDialRing> 
             <circle id=circleDial cx="100" cy="100" r="20"
