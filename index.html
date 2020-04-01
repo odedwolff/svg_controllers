@@ -78,11 +78,12 @@
                 pivX:150,
                 pivY:140,
                 rad:60,
-                containerId:"dialsContainer",
+                containerId:"svgRootTopDial",
                 dialId:"circlePointerTopDial",
                 dragging:false,   /*runtime state, init to false*/
                 isDescrete:false,
-                stopsDeg:[90, 135, 180, 225, 270]
+                stopsDeg:[90, 135, 180, 225, 270],
+                overrideDocument:"svgObjDialTop"
             },
 
         }
@@ -177,7 +178,11 @@
         }
 
         function positionDial(angle, containerName, atCloseststop){
-            var dialElm=document.getElementById(controllerContexts[containerName].dialId);
+            var dialElm;
+            var rtDoc = documentByContainer(containerName);
+            dialElm=rtDoc.getElementById(controllerContexts[containerName].dialId);
+            
+            
             //var innerDialElm= document.getElementById(controllerContexts[containerName].innerDialId);
             var dialPos = posInDoc(circleDial); 
  
@@ -246,7 +251,7 @@
             if(!controllerContexts[containerName].dragging){
                 return;
             }
-            //console.log(e.pageX, e.pageY);
+            console.log(e.pageX, e.pageY);
             positionDialByMouse(containerName, e, false);
         }
 
@@ -261,11 +266,23 @@
         }
         /*----------------------------------------------------------------------*/
         function positionDialByMouse(containerName, e, shoulHopToClosest){
-            var containerElm=document.getElementById(controllerContexts[containerName].containerId);
-                var pvtXLoc=controllerContexts[containerName].pivX;
-                var pvtYLoc=controllerContexts[containerName].pivY;
-                var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY, containerName);
-                positionDial(angDeg , containerName, shoulHopToClosest);
+            var docRT = documentByContainer(containerName);
+            var containerElm=docRT.getElementById(controllerContexts[containerName].containerId);
+            var pvtXLoc=controllerContexts[containerName].pivX;
+            var pvtYLoc=controllerContexts[containerName].pivY;
+            var angDeg=angleFromPivot(containerElm, pvtXLoc, pvtYLoc, e.pageX, e.pageY, containerName);
+            positionDial(angDeg , containerName, shoulHopToClosest);
+        }
+
+        
+        function documentByContainer(containerName){
+            var overrideDocName=controllerContexts[containerName].overrideDocument;
+            //if container points at override document (for instance an external svg file)
+            if(overrideDocName){
+                return document.getElementById(overrideDocName).contentDocument;
+            }
+            //else, return the global documment reference 
+            return document;
         }
 
 
@@ -283,10 +300,9 @@
             //external svg, slighly different than embedded
             var svgObject = document.getElementById('svgObjDialTop');
             var extContent= svgObject.contentDocument;
-            //var extContent= svgObject.contentWindow;
             extContent.getElementById('circlePointerTopDial').addEventListener('mousedown', mouseDownInDial.bind(null, 'contDialtop'));
-            document.getElementById('dialsContainer').addEventListener('mousemove', mouseMoveHandler.bind(null, 'contDialtop'));
-            document.getElementById('dialsContainer').addEventListener('mouseup', mouseUpInContainer.bind(null, 'contDialtop'));
+            extContent.getElementById('svgRootTopDial').addEventListener('mousemove', mouseMoveHandler.bind(null, 'contDialtop'));
+            extContent.getElementById('svgRootTopDial').addEventListener('mouseup', mouseUpInContainer.bind(null, 'contDialtop'));
         }
 
         window.addEventListener("load", setUpListeners);
