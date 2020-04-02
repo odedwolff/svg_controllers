@@ -10,6 +10,17 @@
             top:30px;
             background-color: rgba(50, 157, 114, 0.667);
         }
+        #divSprite2{
+            /* position: absolute; */
+            margin-top:50px;
+            width: 800px;
+            height:400px;
+            left:200px;
+            top:30px;
+            background-color: rgba(50, 157, 114, 0.667);
+        }
+
+        
 
         #svgDialRing{
             position: absolute;
@@ -22,6 +33,16 @@
             top:400px;
         }
         #divGuide{
+            position: absolute;
+            background: rgb(8, 86, 8);
+            width: 10px;
+            height: 10px;
+            left:300px; 
+            top:200px;
+            
+        }
+
+        #divGuide2{
             position: absolute;
             background: rgb(8, 86, 8);
             width: 10px;
@@ -45,6 +66,42 @@
             height: 6px;
             background: yellow;
         }
+
+        /* #divCompoundRings{
+            width: 800px;
+            height:400px;
+            left:200px;
+            top:30px;
+            background-color: rgba(50, 157, 114, 0.667);
+        } */
+/* 
+        #circlePointerTopDial{
+            position: absolute;
+            left:140px;
+            top:150px;
+        }
+ */
+        #svgCarryPointer1{
+            position: absolute;
+            left:140px;
+            top:150px;
+        }
+
+        #circleDial2{
+            fill:black;
+            left:150px;
+            top:140px;
+        }
+
+        #svgDialRing2{
+            position: absolute;
+            background: yellow;   
+            width:100px;
+            height:100px;
+        }
+
+
+        
        
 
 
@@ -72,19 +129,27 @@
                 dialId:"svgDialRing",
                 dragging:false,   /*runtime state, init to false*/
                 isDescrete:false,
-                stopsDeg:[90, 135, 180, 225, 270]
+                stopsDeg:[90, 135, 180, 225, 270],
+                /*use offsets to ajdust  pivot of moving object*/
+                offsetX:100,
+                offsetY:100
             },
             contDialtop:{
-                pivX:150,
-                pivY:140,
+                pivX:300,
+                pivY:200,
                 rad:60,
-                containerId:"svgRootTopDial",
-                dialId:"circlePointerTopDial",
+                containerId:"divSprite2",
+                dialId:"svgDialRing2",
                 dragging:false,   /*runtime state, init to false*/
                 isDescrete:false,
                 stopsDeg:[90, 135, 180, 225, 270],
-                overrideDocument:"svgObjDialTop"
+                offsetX:50,
+                offsetY:50
+                /*, overrideDocument:"svgObjDialTop" */
             },
+
+
+    
 
         }
 
@@ -183,10 +248,8 @@
             dialElm=rtDoc.getElementById(controllerContexts[containerName].dialId);
             
             
-            //var innerDialElm= document.getElementById(controllerContexts[containerName].innerDialId);
             var dialPos = posInDoc(circleDial); 
  
-           // angle = angle + 180;
             angle = angle + 90 
 
             if(atCloseststop && controllerContexts[containerName].isDescrete){
@@ -202,8 +265,10 @@
                 controllerContexts[containerName].pivY 
                 + Math.sin((angle/360) * 2 * Math.PI) * controllerContexts[containerName].rad;
 
-            dialElm.style.left=left - 100;
-            dialElm.style.top=top - 100;
+            
+            console.log("positioning lef,top:" + left,top);
+            dialElm.style.left=left - controllerContexts[containerName].offsetX;
+            dialElm.style.top=top - controllerContexts[containerName].offsetY;
         }
 
 
@@ -297,12 +362,10 @@
             document.getElementById('divSprite').addEventListener('mousemove', mouseMoveHandler.bind(null, 'cont1'));
             document.getElementById('divSprite').addEventListener('mouseup', mouseUpInContainer.bind(null, 'cont1'));
 
-            //external svg, slighly different than embedded
-            var svgObject = document.getElementById('svgObjDialTop');
-            var extContent= svgObject.contentDocument;
-            extContent.getElementById('circlePointerTopDial').addEventListener('mousedown', mouseDownInDial.bind(null, 'contDialtop'));
-            extContent.getElementById('svgRootTopDial').addEventListener('mousemove', mouseMoveHandler.bind(null, 'contDialtop'));
-            extContent.getElementById('svgRootTopDial').addEventListener('mouseup', mouseUpInContainer.bind(null, 'contDialtop'));
+            
+            document.getElementById('circleDial2').addEventListener('mousedown', mouseDownInDial.bind(null, 'contDialtop'));
+            document.getElementById('divSprite2').addEventListener('mousemove', mouseMoveHandler.bind(null, 'contDialtop'));
+            document.getElementById('divSprite2').addEventListener('mouseup', mouseUpInContainer.bind(null, 'contDialtop'));
         }
 
         window.addEventListener("load", setUpListeners);
@@ -331,11 +394,21 @@
         </button>
     </div>
     <div id=dialsContainer>
-        <object type="image/svg+xml" data="top_dial.svg" id=svgObjDialTop></object>
-        <div id="guideCentrDialTop">
+<!--         <object type="image/svg+xml" data="top_dial.svg" id=svgObjDialTop></object>
+ -->  
+<div id=divCompoundRings>      
+    <div id=divSprite2>
 
-        </div>
+        <svg width="800" height="600" id=svgDialRing2> 
+            <circle id=circleDial2 cx="50" cy="50" r="48"
+            stroke="black" stroke-width="2" fill="grey" /> 
+        </svg> 
+        <div id=divGuide2></div>
+        
     </div>
+</div>  
+       
+ <!--   <div id="guideCentrDialTop"></div> </div> -->
 
     
 </body>
