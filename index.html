@@ -160,12 +160,9 @@
                 isDescrete:false,
                 stopsDeg:[90, 135, 180, 225, 270],
                 offsetX:50,
-                offsetY:50
-                /*, overrideDocument:"svgObjDialTop" */
-            },
-
-
-    
+                offsetY:50,
+                postMouseRepositionfunc:move3gears    
+            }
 
         }
 
@@ -177,7 +174,6 @@
             console.log("mouse leave");
         }
         function go(){
-            //rotateAnim("svgButton1", 0, -90, 1.0);
             roatateAroundExt('svgDialRing', 50, 50, 200, 0, -90, 0.4);
         }
 
@@ -285,6 +281,12 @@
             console.log("positioning lef,top:" + left,top);
             dialElm.style.left=left - controllerContexts[containerName].offsetX;
             dialElm.style.top=top - controllerContexts[containerName].offsetY;
+
+
+            var postFunc = controllerContexts[containerName].postMouseRepositionfunc;
+            if(postFunc){
+                postFunc(angle);
+            }
         }
 
 
@@ -357,6 +359,19 @@
         }
 
 
+        /**continer specific handlers **/
+
+        function move3gears(angle){
+            document.getElementById("pathOuter").style.transform="rotate(" + angle * -0.5 + "deg)"
+            document.getElementById("pathMid").style.transform="rotate(" + angle * 1 + "deg)"
+            document.getElementById("pathInner").style.transform="rotate(" + angle * -1 + "deg)"
+        }
+
+
+
+        /*******************************************************/
+
+        
 
         /**set listeners for the moving parts**/
         function docLoadHandler(){
